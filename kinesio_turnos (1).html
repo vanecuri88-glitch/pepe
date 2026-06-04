@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KinesioCitas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal-50:#E1F5EE;--teal-100:#9FE1CB;--teal-200:#5DCAA5;--teal-400:#1D9E75;
+  --teal-600:#0F6E56;--teal-800:#085041;
+  --blue-50:#E6F1FB;--blue-200:#85B7EB;--blue-600:#185FA5;
+  --amber-50:#FAEEDA;--amber-400:#BA7517;--amber-600:#854F0B;
+  --red-50:#FCEBEB;--red-200:#F09595;--red-600:#A32D2D;
+  --green-50:#EAF3DE;--green-600:#3B6D11;
+  --purple-50:#EEEDFE;--purple-600:#534AB7;
+  --gray-50:#F1EFE8;--gray-100:#D3D1C7;--gray-400:#888780;--gray-600:#5F5E5A;--gray-900:#2C2C2A;
+  --bg:#f4f8f6;--card:#fff;--border:#dde8e3;
+  --text:#152820;--muted:#5a7268;--accent:#1D9E75;--accent-dark:#0F6E56;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* HEADER */
+.hdr{background:var(--teal-600);color:#fff;padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,60,40,.18);}
+.hdr-logo{font-family:'DM Serif Display',serif;font-size:1.35rem;letter-spacing:-.5px;}
+.hdr-logo span{color:var(--teal-100);}
+.hdr-sub{font-size:.75rem;color:rgba(255,255,255,.7);margin-left:8px;font-style:italic;}
+.hdr-r{display:flex;align-items:center;gap:10px;}
+.hdr-tab{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:6px 14px;font-family:inherit;font-size:.8rem;cursor:pointer;transition:background .2s;}
+.hdr-tab:hover,.hdr-tab.active{background:rgba(255,255,255,.25);}
+
+/* LAYOUT */
+.wrap{max-width:1080px;margin:0 auto;padding:1.5rem 1rem 4rem;display:grid;grid-template-columns:360px 1fr;gap:1.5rem;}
+@media(max-width:780px){.wrap{grid-template-columns:1fr;padding:1rem;}}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.ch{padding:.9rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.ct{font-size:.9rem;font-weight:600;display:flex;align-items:center;gap:7px;color:var(--text);}
+.ct svg{color:var(--accent);}
+.cb{padding:1.2rem;}
+
+/* FORM */
+.fg{margin-bottom:.9rem;}
+label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+input,select,textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:.88rem;color:var(--text);background:#fff;transition:border .15s,box-shadow .15s;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,158,117,.1);}
+textarea{resize:vertical;min-height:65px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:400px){.fr{grid-template-columns:1fr;}}
+
+/* PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:6px;}
+.pill{border:1.5px solid var(--border);border-radius:20px;padding:5px 13px;font-size:.78rem;cursor:pointer;transition:all .15s;color:var(--muted);background:transparent;font-family:inherit;}
+.pill:hover{border-color:var(--teal-200);background:var(--teal-50);}
+.pill.on{background:var(--teal-50);border-color:var(--accent);color:var(--teal-600);font-weight:600;}
+
+/* RECURRENCE */
+.rec-box{background:var(--gray-50);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-top:.4rem;}
+.rec-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.rec-row:last-child{margin-bottom:0;}
+.rec-row label{margin:0;font-size:.78rem;white-space:nowrap;}
+.rec-row input[type=number]{width:70px;padding:6px 8px;}
+.rec-row select{width:auto;padding:6px 10px;}
+.dow-grid{display:flex;gap:4px;flex-wrap:wrap;}
+.dow-btn{border:1.5px solid var(--border);border-radius:50%;width:32px;height:32px;font-size:.72rem;font-weight:600;cursor:pointer;background:#fff;color:var(--muted);transition:all .15s;font-family:inherit;}
+.dow-btn.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* SUBMIT */
+.btn-main{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px;font-family:inherit;font-size:.95rem;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:.5rem;}
+.btn-main:hover{background:var(--accent-dark);}
+.btn-main:active{transform:scale(.98);}
+.btn-sec{background:var(--teal-50);color:var(--teal-600);border:1px solid var(--teal-100);border-radius:8px;padding:6px 12px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s;}
+.btn-sec:hover{background:var(--teal-100);}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;gap:8px;}
+.cnb{background:none;border:1px solid var(--border);border-radius:8px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+.cnb:hover{background:var(--gray-50);}
+.cal-m{font-size:.88rem;font-weight:600;min-width:120px;text-align:center;text-transform:capitalize;}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:10px;}
+.cal-dow{text-align:center;font-size:.65rem;font-weight:700;color:var(--muted);padding:3px 0;text-transform:uppercase;letter-spacing:.3px;}
+.cd{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;font-size:.78rem;cursor:pointer;transition:background .12s;position:relative;border:none;background:none;color:var(--text);font-family:inherit;gap:2px;}
+.cd:hover{background:var(--teal-50);}
+.cd.oth{color:var(--gray-400);}
+.cd.tod{font-weight:700;color:var(--teal-600);background:var(--teal-50);}
+.cd.sel{background:var(--accent)!important;color:#fff!important;font-weight:700;}
+.dots{display:flex;gap:2px;justify-content:center;}
+.dot{width:4px;height:4px;border-radius:50%;}
+.dot-e{background:var(--blue-200);}
+.dot-t{background:var(--teal-200);}
+.dot-s{background:var(--amber-400);}
+.cd.sel .dot{background:rgba(255,255,255,.7);}
+
+/* LIST */
+.day-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.day-lbl{font-size:.88rem;font-weight:600;text-transform:capitalize;}
+.cbadge{background:var(--teal-50);color:var(--teal-600);border-radius:20px;padding:2px 10px;font-size:.72rem;font-weight:700;}
+.apt{border:1px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:8px;display:flex;gap:11px;align-items:flex-start;transition:border-color .15s,box-shadow .15s;}
+.apt:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(29,158,117,.1);}
+.apt-tc{min-width:46px;text-align:center;}
+.apt-t{font-size:.82rem;font-weight:700;color:var(--accent);}
+.apt-d{font-size:.68rem;color:var(--muted);margin-top:1px;}
+.apt-i{flex:1;}
+.apt-n{font-size:.88rem;font-weight:600;}
+.apt-dx{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.apt-row{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap;}
+.badge{display:inline-block;font-size:.68rem;padding:2px 8px;border-radius:10px;font-weight:600;}
+.b-e{background:var(--blue-50);color:var(--blue-600);}
+.b-t{background:var(--teal-50);color:var(--teal-600);}
+.b-s{background:var(--amber-50);color:var(--amber-600);}
+.b-a{background:var(--green-50);color:var(--green-600);}
+.b-r{background:var(--purple-50);color:var(--purple-600);}
+.gcal-link{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;color:var(--blue-600);text-decoration:none;border:1px solid var(--blue-200);border-radius:6px;padding:2px 7px;transition:background .15s;}
+.gcal-link:hover{background:var(--blue-50);}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);}
+.empty svg{opacity:.35;margin-bottom:10px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--teal-800);color:#fff;padding:11px 18px;border-radius:12px;font-size:.82rem;z-index:999;transition:transform .28s;display:flex;align-items:center;gap:7px;box-shadow:0 4px 16px rgba(0,0,0,.2);max-width:90vw;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--red-600);}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.modal{background:#fff;border-radius:16px;padding:1.5rem;max-width:460px;width:100%;max-height:90vh;overflow-y:auto;}
+.modal-t{font-size:.95rem;font-weight:700;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;}
+.modal-x{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;line-height:1;}
+.dr{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:.83rem;}
+.dr:last-of-type{border-bottom:none;}
+.dl{color:var(--muted);min-width:80px;font-weight:500;flex-shrink:0;}
+.modal-btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.btn-gcal{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--blue-50);color:var(--blue-600);border:1px solid var(--blue-200);border-radius:9px;padding:9px 12px;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s;}
+.btn-gcal:hover{background:var(--blue-200);}
+.btn-del{display:inline-flex;align-items:center;gap:5px;background:var(--red-50);color:var(--red-600);border:1px solid var(--red-200);border-radius:9px;padding:9px 12px;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-del:hover{background:var(--red-200);}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.toggle{width:36px;height:20px;background:var(--gray-100);border-radius:10px;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--accent);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;}
+.toggle.on::after{left:19px;}
+.toggle-lbl{font-size:.82rem;color:var(--muted);}
+
+/* INFO BOX */
+.info-box{background:var(--teal-50);border:1px solid var(--teal-100);border-radius:10px;padding:10px 13px;font-size:.78rem;color:var(--teal-600);line-height:1.5;margin-bottom:1rem;}
+.info-box strong{font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div style="display:flex;align-items:center;">
+    <div class="hdr-logo">Kinesio<span>Citas</span></div>
+    <span class="hdr-sub">sin login · gratis</span>
+  </div>
+  <div class="hdr-r">
+    <button class="hdr-tab active" onclick="showTab('form',this)">Nueva cita</button>
+    <button class="hdr-tab" onclick="showTab('hist',this)">Historial</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- LEFT -->
+  <div>
+
+    <!-- FORM -->
+    <div class="card" id="tab-form">
+      <div class="ch">
+        <span class="ct">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Datos del turno
+        </span>
+      </div>
+      <div class="cb">
+
+        <div class="info-box">
+          <strong>¿Cómo funciona?</strong> Completá el formulario y hacé clic en el botón verde. Se abre Google Calendar con la cita ya cargada — solo confirmás y listo. ¡Sin crear cuenta!
+        </div>
+
+        <div class="fg">
+          <label>Nombre del paciente *</label>
+          <input type="text" id="f-nom" placeholder="Ej: María García" autocomplete="off">
+        </div>
+
+        <div class="fr">
+          <div class="fg">
+            <label>Teléfono</label>
+            <input type="tel" id="f-tel" placeholder="+54 9 379...">
+          </div>
+          <div class="fg">
+            <label>Email paciente</label>
+            <input type="email" id="f-email" placeholder="correo@gmail.com">
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>Tipo de sesión *</label>
+          <div class="pills">
+            <button class="pill on" data-v="Evaluación" onclick="pill(this)">Evaluación</button>
+            <button class="pill" data-v="Tratamiento" onclick="pill(this)">Tratamiento</button>
+            <button class="pill" data-v="Seguimiento" onclick="pill(this)">Seguimiento</button>
+            <button class="pill" data-v="Alta" onclick="pill(this)">Alta</button>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>Diagnóstico / Motivo *</label>
+          <textarea id="f-dx" placeholder="Ej: Lumbalgia crónica, cervicalgia, post-operatorio rodilla..."></textarea>
+        </div>
+
+        <div class="fr">
+          <div class="fg">
+            <label>Fecha *</label>
+            <input type="date" id="f-fecha">
+          </div>
+          <div class="fg">
+            <label>Hora inicio *</label>
+            <input type="time" id="f-hora" value="09:00">
+          </div>
+        </div>
+
+        <div class="fr">
+          <div class="fg">
+            <label>Duración</label>
+            <select id="f-dur">
+              <option value="30">30 minutos</option>
+              <option value="45">45 minutos</option>
+              <option value="60" selected>60 minutos</option>
+              <option value="90">90 minutos</option>
+              <option value="120">2 horas</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Sala / Box</label>
+            <input type="text" id="f-sala" placeholder="Box 1, Pileta...">
+          </div>
+        </div>
+
+        <!-- RECURRENCE TOGGLE -->
+        <div class="fg">
+          <div class="toggle-row" onclick="toggleRec()">
+            <div class="toggle" id="rec-toggle"></div>
+            <span class="toggle-lbl">Turno recurrente (repetir automáticamente)</span>
+          </div>
+          <div class="rec-box" id="rec-box" style="display:none; margin-top:8px;">
+            <div class="rec-row">
+              <label>Repetir cada</label>
+              <input type="number" id="rec-cada" value="1" min="1" max="12">
+              <select id="rec-freq">
+                <option value="WEEKLY">semana(s)</option>
+                <option value="DAILY">día(s)</option>
+                <option value="MONTHLY">mes(es)</option>
+              </select>
+            </div>
+            <div class="rec-row" id="dow-row">
+              <label>Días:</label>
+              <div class="dow-grid">
+                <button class="dow-btn" data-d="SU" onclick="toggleDow(this)">D</button>
+                <button class="dow-btn on" data-d="MO" onclick="toggleDow(this)">L</button>
+                <button class="dow-btn" data-d="TU" onclick="toggleDow(this)">M</button>
+                <button class="dow-btn on" data-d="WE" onclick="toggleDow(this)">X</button>
+                <button class="dow-btn" data-d="TH" onclick="toggleDow(this)">J</button>
+                <button class="dow-btn on" data-d="FR" onclick="toggleDow(this)">V</button>
+                <button class="dow-btn" data-d="SA" onclick="toggleDow(this)">S</button>
+              </div>
+            </div>
+            <div class="rec-row">
+              <label>Cantidad de sesiones</label>
+              <input type="number" id="rec-count" value="10" min="1" max="60">
+              <label>sesiones</label>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-main" onclick="abrirGCal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Abrir en Google Calendar →
+        </button>
+
+        <p style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:8px;line-height:1.5;">
+          Se abre Google Calendar con el turno precargado.<br>Confirmás con un clic y queda guardado en tu cuenta.
+        </p>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="card" style="margin-top:1.2rem;">
+      <div class="ch">
+        <span class="ct">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+          Calendario
+        </span>
+        <div class="cal-nav">
+          <button class="cnb" onclick="mMes(-1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <span class="cal-m" id="cal-t"></span>
+          <button class="cnb" onclick="mMes(1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
+      </div>
+      <div class="cb" style="padding:.9rem;">
+        <div class="cal-g">
+          <div class="cal-dow">Dom</div><div class="cal-dow">Lun</div><div class="cal-dow">Mar</div>
+          <div class="cal-dow">Mié</div><div class="cal-dow">Jue</div><div class="cal-dow">Vie</div><div class="cal-dow">Sáb</div>
+        </div>
+        <div class="cal-g" id="cal-days"></div>
+        <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--muted);"><span class="dot dot-e" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></span>Evaluación</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--muted);"><span class="dot dot-t" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></span>Tratamiento</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--muted);"><span class="dot dot-s" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></span>Seguimiento</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="card" style="align-self:start;">
+    <div class="ch">
+      <span class="ct">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Turnos del día
+      </span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="day-lbl" id="d-lbl"></span>
+        <span class="cbadge" id="d-cnt">0</span>
+      </div>
+    </div>
+    <div class="cb">
+      <div id="apts"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- HISTORIAL TAB (hidden) -->
+<div id="tab-hist" style="display:none;max-width:1080px;margin:1.5rem auto;padding:0 1rem 4rem;">
+  <div class="card">
+    <div class="ch">
+      <span class="ct">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.36"/></svg>
+        Historial local de citas
+      </span>
+      <button class="btn-sec" onclick="clearAll()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Borrar todo
+      </button>
+    </div>
+    <div class="cb">
+      <div id="hist-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal-bg" style="display:none;" onclick="closeMod(event)">
+  <div class="modal">
+    <div class="modal-t">Detalle del turno<button class="modal-x" onclick="document.getElementById('modal').style.display='none'">✕</button></div>
+    <div id="modal-c"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-m"></span>
+</div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+let curMes=new Date(), selDate=new Date(), recOn=false;
+let turnos=JSON.parse(localStorage.getItem('kc_turnos')||'[]');
+
+// ─── INIT ─────────────────────────────────────────────────────
+window.onload=()=>{
+  const hoy=new Date();
+  selDate=hoy; curMes=new Date(hoy.getFullYear(),hoy.getMonth(),1);
+  document.getElementById('f-fecha').value=fmtDate(hoy);
+  renderCal(); renderApts(); updateDLabel();
+};
+
+// ─── TABS ─────────────────────────────────────────────────────
+function showTab(t,btn){
+  document.getElementById('tab-form').style.display=t==='form'?'':'none';
+  document.getElementById('tab-hist').style.display=t==='hist'?'':'none';
+  document.querySelectorAll('.hdr-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(t==='hist') renderHist();
+}
+
+// ─── PILLS ────────────────────────────────────────────────────
+function pill(el){document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
+function getTipo(){return document.querySelector('.pill.on')?.dataset.v||'Evaluación';}
+
+// ─── RECURRENCE ───────────────────────────────────────────────
+function toggleRec(){
+  recOn=!recOn;
+  document.getElementById('rec-toggle').classList.toggle('on',recOn);
+  document.getElementById('rec-box').style.display=recOn?'block':'none';
+}
+function toggleDow(el){el.classList.toggle('on');}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('rec-freq')?.addEventListener('change',function(){
+    document.getElementById('dow-row').style.display=this.value==='WEEKLY'?'flex':'none';
+  });
+});
+
+// ─── GOOGLE CALENDAR LINK ─────────────────────────────────────
+function abrirGCal(){
+  const nom=document.getElementById('f-nom').value.trim();
+  const fecha=document.getElementById('f-fecha').value;
+  const hora=document.getElementById('f-hora').value;
+  if(!nom||!fecha||!hora){toast('Completá nombre, fecha y hora','err');return;}
+
+  const tipo=getTipo();
+  const dx=document.getElementById('f-dx').value.trim();
+  const tel=document.getElementById('f-tel').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  const sala=document.getElementById('f-sala').value.trim();
+  const dur=parseInt(document.getElementById('f-dur').value);
+
+  // Build datetime strings for GCal (YYYYMMDDTHHMMSS)
+  const [y,mo,d]=fecha.split('-');
+  const [h,mi]=hora.split(':');
+  const startDT=`${y}${mo}${d}T${h}${mi}00`;
+  const endDate=new Date(parseInt(y),parseInt(mo)-1,parseInt(d),parseInt(h),parseInt(mi)+dur);
+  const ey=endDate.getFullYear(),em=String(endDate.getMonth()+1).padStart(2,'0'),ed=String(endDate.getDate()).padStart(2,'0');
+  const eh=String(endDate.getHours()).padStart(2,'0'),emi=String(endDate.getMinutes()).padStart(2,'0');
+  const endDT=`${ey}${em}${ed}T${eh}${emi}00`;
+
+  const title=encodeURIComponent(`[Kinesio] ${nom} — ${tipo}`);
+  let details=`Paciente: ${nom}\nTipo: ${tipo}`;
+  if(dx) details+=`\nDiagnóstico: ${dx}`;
+  if(tel) details+=`\nTeléfono: ${tel}`;
+  if(email) details+=`\nEmail: ${email}`;
+  if(sala) details+=`\nSala: ${sala}`;
+  const detailsEnc=encodeURIComponent(details);
+  const locEnc=sala?encodeURIComponent(sala):'';
+
+  let url=`https://calendar.google.com/calendar/r/eventedit?text=${title}&dates=${startDT}/${endDT}&details=${detailsEnc}&location=${locEnc}`;
+
+  // Recurrence
+  if(recOn){
+    const freq=document.getElementById('rec-freq').value;
+    const cada=document.getElementById('rec-cada').value;
+    const count=document.getElementById('rec-count').value;
+    let rrule=`RRULE:FREQ=${freq};INTERVAL=${cada};COUNT=${count}`;
+    if(freq==='WEEKLY'){
+      const days=[...document.querySelectorAll('.dow-btn.on')].map(b=>b.dataset.d).join(',');
+      if(days) rrule+=`;BYDAY=${days}`;
+    }
+    url+=`&recur=${encodeURIComponent(rrule)}`;
+  }
+
+  // Save locally
+  const turno={
+    id:Date.now().toString(),
+    nombre:nom,tipo,dx,tel,email,sala,
+    fecha,hora,dur,
+    gcal:url,
+    creado:new Date().toISOString()
+  };
+  turnos.unshift(turno);
+  localStorage.setItem('kc_turnos',JSON.stringify(turnos));
+
+  // Update calendar dots
+  renderCal(); renderApts(); updateDLabel();
+
+  window.open(url,'_blank');
+  toast('✓ Abriendo Google Calendar con el turno listo');
+}
+
+// ─── CALENDAR ─────────────────────────────────────────────────
+function fmtDate(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+function getDotClass(fecha){
+  const ts=turnos.filter(t=>t.fecha===fecha);
+  if(!ts.length) return null;
+  const tipos=ts.map(t=>t.tipo);
+  if(tipos.includes('Evaluación')) return 'dot-e';
+  if(tipos.includes('Tratamiento')) return 'dot-t';
+  return 'dot-s';
+}
+
+function getDotsForDate(fecha){
+  const ts=turnos.filter(t=>t.fecha===fecha);
+  const set=new Set(ts.map(t=>t.tipo));
+  let h='';
+  if(set.has('Evaluación')) h+=`<span class="dot dot-e"></span>`;
+  if(set.has('Tratamiento')) h+=`<span class="dot dot-t"></span>`;
+  if(set.has('Seguimiento')||set.has('Alta')) h+=`<span class="dot dot-s"></span>`;
+  return h?`<div class="dots">${h}</div>`:'';
+}
+
+function renderCal(){
+  const y=curMes.getFullYear(),m=curMes.getMonth();
+  document.getElementById('cal-t').textContent=`${MESES[m]} ${y}`;
+  const first=new Date(y,m,1).getDay();
+  const last=new Date(y,m+1,0).getDate();
+  const today=new Date(); const todayStr=fmtDate(today);
+  let html='';
+  for(let i=0;i<first;i++){const d=new Date(y,m,-first+i+1);html+=`<button class="cd oth" onclick="selDay(${d.getFullYear()},${d.getMonth()},${d.getDate()})">${d.getDate()}</button>`;}
+  for(let d=1;d<=last;d++){
+    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isTod=ds===todayStr;
+    const isSel=ds===fmtDate(selDate);
+    const dots=getDotsForDate(ds);
+    html+=`<button class="cd${isTod?' tod':''}${isSel?' sel':''}" onclick="selDay(${y},${m},${d})">${d}${dots}</button>`;
+  }
+  const rem=42-first-last;
+  for(let d=1;d<=rem&&d<=7;d++){const dd=new Date(y,m+1,d);html+=`<button class="cd oth" onclick="selDay(${dd.getFullYear()},${dd.getMonth()},${dd.getDate()})">${d}</button>`;}
+  document.getElementById('cal-days').innerHTML=html;
+}
+
+function mMes(dir){curMes=new Date(curMes.getFullYear(),curMes.getMonth()+dir,1);renderCal();}
+
+function selDay(y,m,d){
+  selDate=new Date(y,m,d);
+  document.getElementById('f-fecha').value=fmtDate(selDate);
+  renderCal(); renderApts(); updateDLabel();
+}
+
+// ─── TURNOS DEL DÍA ───────────────────────────────────────────
+function updateDLabel(){
+  document.getElementById('d-lbl').textContent=selDate.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+}
+
+const BADGE={Evaluación:'b-e',Tratamiento:'b-t',Seguimiento:'b-s',Alta:'b-a'};
+
+function renderApts(){
+  const key=fmtDate(selDate);
+  const list=turnos.filter(t=>t.fecha===key).sort((a,b)=>a.hora.localeCompare(b.hora));
+  document.getElementById('d-cnt').textContent=`${list.length} turno${list.length!==1?'s':''}`;
+  if(!list.length){
+    document.getElementById('apts').innerHTML=`<div class="empty"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg><p style="font-size:.85rem;">Sin turnos para este día</p><p style="font-size:.75rem;margin-top:4px;">Completá el formulario y abrí Google Calendar</p></div>`;
+    return;
+  }
+  document.getElementById('apts').innerHTML=list.map(t=>`
+    <div class="apt" onclick="showDetail('${t.id}')">
+      <div class="apt-tc">
+        <div class="apt-t">${t.hora}</div>
+        <div class="apt-d">${t.dur}min</div>
+      </div>
+      <div class="apt-i">
+        <div class="apt-n">${t.nombre}</div>
+        ${t.dx?`<div class="apt-dx">${t.dx}</div>`:''}
+        <div class="apt-row">
+          <span class="badge ${BADGE[t.tipo]||'b-s'}">${t.tipo}</span>
+          ${t.sala?`<span style="font-size:.7rem;color:var(--muted);">📍 ${t.sala}</span>`:''}
+          <a class="gcal-link" href="${t.gcal}" target="_blank" onclick="event.stopPropagation()">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Ver en GCal
+          </a>
+        </div>
+      </div>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);margin-top:4px;flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`).join('');
+}
+
+// ─── DETAIL MODAL ─────────────────────────────────────────────
+function showDetail(id){
+  const t=turnos.find(x=>x.id===id); if(!t) return;
+  const rows=[
+    ['Paciente',t.nombre],['Tipo',t.tipo],['Fecha',t.fecha],['Hora',`${t.hora} (${t.dur} min)`],
+    ['Diagnóstico',t.dx],['Teléfono',t.tel],['Email',t.email],['Sala',t.sala]
+  ].filter(([,v])=>v);
+  document.getElementById('modal-c').innerHTML=
+    rows.map(([l,v])=>`<div class="dr"><span class="dl">${l}</span><span>${v}</span></div>`).join('')+
+    `<div class="modal-btns">
+      <a class="btn-gcal" href="${t.gcal}" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Abrir en Google Calendar
+      </a>
+      <button class="btn-del" onclick="deleteTurno('${t.id}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Eliminar
+      </button>
+    </div>`;
+  document.getElementById('modal').style.display='flex';
+}
+function closeMod(e){if(e.target.id==='modal') document.getElementById('modal').style.display='none';}
+
+function deleteTurno(id){
+  turnos=turnos.filter(t=>t.id!==id);
+  localStorage.setItem('kc_turnos',JSON.stringify(turnos));
+  document.getElementById('modal').style.display='none';
+  renderCal(); renderApts(); updateDLabel();
+  toast('Turno eliminado');
+}
+
+// ─── HISTORIAL ────────────────────────────────────────────────
+function renderHist(){
+  if(!turnos.length){
+    document.getElementById('hist-list').innerHTML=`<div class="empty"><p>No hay citas registradas aún.</p></div>`;return;
+  }
+  const sorted=[...turnos].sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  document.getElementById('hist-list').innerHTML=sorted.map(t=>`
+    <div class="apt">
+      <div class="apt-tc"><div class="apt-t">${t.hora}</div><div class="apt-d">${t.fecha.split('-').reverse().join('/')}</div></div>
+      <div class="apt-i">
+        <div class="apt-n">${t.nombre}</div>
+        ${t.dx?`<div class="apt-dx">${t.dx}</div>`:''}
+        <div class="apt-row">
+          <span class="badge ${BADGE[t.tipo]||'b-s'}">${t.tipo}</span>
+          <a class="gcal-link" href="${t.gcal}" target="_blank">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Ver en GCal
+          </a>
+        </div>
+      </div>
+      <button style="background:none;border:none;cursor:pointer;color:var(--muted);" onclick="deleteTurno('${t.id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      </button>
+    </div>`).join('');
+}
+
+function clearAll(){
+  if(!confirm('¿Borrar todo el historial local?')) return;
+  turnos=[]; localStorage.removeItem('kc_turnos');
+  renderHist(); renderCal(); renderApts();
+  toast('Historial borrado');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-m').textContent=msg;
+  t.className='toast'+(type?' '+type:'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
